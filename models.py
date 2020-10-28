@@ -14,7 +14,7 @@ class GradientBoosting():
         
     def test(self, test_x, test_y, echo = True):
     
-        output = self.model.predict(test_x)
+        output = self.predict(test_x)
         target = test_y.to_numpy()
     
         self.diff = target - output
@@ -28,6 +28,12 @@ class GradientBoosting():
         
         if echo:
             print(f"MAE: euro {self.mae/100}, MAE std: euro {self.mae_std/100}, {perfect} spot-on, {inperfect} off")
+            
+    def predict(self, x):
+        return self.model.predict(x)
+    
+    def toNumpyVector(self, x):
+        return x.to_numpy().reshape(1, -1)
     
         
     def graph(self, bin_size = 25000):
