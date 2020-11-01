@@ -11,6 +11,8 @@ import utils
 from models import GradientBoosting
 from models import FullyConnected
 
+from sklearn.preprocessing import MinMaxScaler
+
 # TO ASK
 # what to do with missing days
 
@@ -78,7 +80,15 @@ df = utils.remove_nan_values(df)
 
 date = '2020-02-01'
 
-df_pre, df_post = utils.split_on_date(df, date)
+scaler = MinMaxScaler()
+
+
+df_scaled = df.copy()
+df_scaled[df_scaled.columns] = scaler.fit_transform(df_scaled[df_scaled.columns])
+
+df_scaled['store_id'] = df_scaled.index.get_level_values('store_id')
+
+df_pre, df_post = utils.split_on_date(df_scaled, date)
 
 train_x, train_y, test_x, test_y = utils.create_train_test(df_pre)
 
@@ -91,11 +101,16 @@ model = FullyConnected(train_x.shape[1])
 def pd_to_np_float(pd):
     return pd.to_numpy().astype('float32')
 
+
+
 train_x, train_y, test_x, test_y = pd_to_np_float(train_x), pd_to_np_float(train_y), pd_to_np_float(test_x), pd_to_np_float(test_y)
 
-model.model.fit(train_x, train_y, 
-                epochs = 100, 
-                validation_data = (test_x,test_y))
+
+
+model.model.fit(train_x, train_y, epochs = 100, validation_data = (test_x,test_y))
+
+
+
 
 
 

@@ -68,8 +68,10 @@ class FullyConnected():
     def __init__(self, num_feat):
     
         model = Sequential([
-            Dense(64, activation='relu', input_shape=(num_feat,)),
-            Dropout(.3),
+            Dense(128, activation='relu', input_shape=(num_feat,)),
+            #Dropout(.3),
+            Dense(32, activation='relu', input_shape=(num_feat,)),
+            #Dropout(.3),
             Dense(1, activation='relu')
         ])
         model.compile(optimizer='adam', loss='mse',
