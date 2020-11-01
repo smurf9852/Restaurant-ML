@@ -2,6 +2,24 @@ from sklearn.ensemble import GradientBoostingClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 
+from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, LSTM, Dropout, Input, BatchNormalization
+from keras.models import Model, Sequential
+from sklearn.preprocessing import normalize
+import pickle
+import datetime
+import numpy as np
+from copy import deepcopy
+from matplotlib import pyplot as plt
+
+import pandas as pd
+
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_log_error
+# from lightgbm import LGBMRegressor
+from sklearn import base
+import tensorflow as tf
+
+
 
 class GradientBoosting():
     def __init__(self):
@@ -45,5 +63,25 @@ class GradientBoosting():
         plt.xticks([-5000,-2000,-600,0,600,2000,5000])
         plt.show()
 
+class FullyConnected():
+    
+    def __init__(self, num_feat):
+    
+        model = Sequential([
+            Dense(64, activation='relu', input_shape=(num_feat,)),
+            Dropout(.3),
+            Dense(1, activation='relu')
+        ])
+        model.compile(optimizer='adam', loss='mse',
+                      metrics = 
+                      [ tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError()
+                          ])
+        self.model = model
+        
+    #def fit(self, train_x, train_y):
+    
+        #self.model.fit(train_x.to_numpy(), train_y.to_numpy())
+        
+    
 
     
