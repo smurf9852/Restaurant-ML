@@ -94,7 +94,7 @@ def insert_past_revenues(df):
     df['revenue_2daysago'] = df.apply(lambda row: get_past_revenue(df, row, 2), axis=1)
     df['revenue_lastweek'] = df.apply(lambda row: get_past_revenue(df, row, 7), axis=1)
     df['revenue_lastmonth'] = df.apply(lambda row: get_past_revenue(df, row, 0, 1), axis=1)
-    df['revenue_lastyear'] = df.apply(lambda row: get_past_revenue(df, row, 0, 12), axis=1)
+    #df['revenue_lastyear'] = df.apply(lambda row: get_past_revenue(df, row, 0, 12), axis=1)
     
     return df
 
@@ -105,7 +105,7 @@ def binning(df, bin_size = 50000):
     df['revenue_2daysago'] = continues_to_bins(df['revenue_2daysago'], bin_size)
     df['revenue_lastweek'] = continues_to_bins(df['revenue_lastweek'], bin_size)
     df['revenue_lastmonth'] = continues_to_bins(df['revenue_lastmonth'], bin_size)
-    df['revenue_lastyear'] = continues_to_bins(df['revenue_lastyear'], bin_size)
+    #df['revenue_lastyear'] = continues_to_bins(df['revenue_lastyear'], bin_size)
     
     return df
 
