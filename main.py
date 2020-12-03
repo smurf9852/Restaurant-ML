@@ -77,104 +77,51 @@ df = utils.remove_nan_values(df)
 
 date = '2020-01-01'
 
+
+scaler = MinMaxScaler()
+df_scaled = df.copy()
+df_scaled[df_scaled.columns] = scaler.fit_transform(df_scaled[df_scaled.columns])
 df['store_id'] = df.index.get_level_values('store_id')
-
-#scaler = MinMaxScaler()
-#df_scaled = df.copy()
-#df_scaled[df_scaled.columns] = scaler.fit_transform(df_scaled[df_scaled.columns])
-
 
 df_pre, df_post = utils.split_on_date(df, date)
 
 train_x, train_y, test_x, test_y = utils.create_train_test(df_pre)
 
 model = FullyConnected(train_x.shape[1])
-model.fit(train_x.astype(float), train_y, validation_data = (test_x.astype(float), test_y), epochs = 5)
+model.model.fit(train_x.astype(float), train_y, validation_data = (test_x.astype(float), test_y), epochs = 10)
 output = model.predict(test_x.astype(float))
 
-#output_scaled = scaler.inverse_transform(np.hstack((np.zeros((len(output),df.shape[1]-1)), output)))
+model.test(test_x.astype(float), test_y)
 
 
+#1 DAY ROLLOUT
 
-# model.test(test_x, test_y)
+store_id = 3
+post_x, post_y = utils.create_train_test(df_post, test = False, store_id = store_id)
 
+outputs = []
+targets = []
 
-
-# #1 DAY ROLLOUT
-
-# store_id = 3
-# post_x, post_y = utils.create_train_test(df_post, test = False, store_id = store_id)
-
-# outputs = []
-# targets = []
-
-# for i, x in post_x.iloc[0:20].iterrows():
+for i, x in post_x.iloc[0:20].iterrows():
     
-#     target = post_y.loc[i]   
+    target = post_y.loc[i]   
     
-#     x_vec = model.toNumpyVector(x)
-#     output = model.predict(x_vec)
+    output = model.model.predict(x.astype(float).to_numpy().reshape(1,-1))
     
-#     output = int(output.item())
+    output = int(output.item())
 
-#     outputs.append(output//100)
-#     targets.append(target//100)
+    outputs.append(output//100)
+    targets.append(target//100)
     
-
-# #TOTAL ROLLOUT
-
-
-# store_id = 3
-
-# post_x, post_y = utils.create_train_test(df_post, test = False, store_id = store_id)
-# revenue_array = utils.get_past_revenue_array(df, store_id, date, 30)
-
-# output_rollout = []
-
-# day = datetime.strptime(date, "%Y-%m-%d")
-
-# for i, x in post_x.iloc[0:20].iterrows():
     
-#     target = post_y.loc[i]   
-    
-#     r_1 = revenue_array[-1]
-#     r_2 = revenue_array[-2]
-#     r_7 = revenue_array[-7]
-#     r_month = revenue_array[-28]
-    
-#     x.revenue_1daysago = r_1
-#     x.revenue_2daysago = r_2
-#     x.revenue_lastweek = r_7
-#     x.revenue_lastmonth = r_month
-    
-#     x_vec = model.toNumpyVector(x)
-#     output = model.predict(x_vec)
-    
-#     output = int(output.item())
+plt.bar(np.arange(len(outputs)) - 0.25, outputs, 0.25, label = 'output 1 day rollout', color = 'dodgerblue')
+plt.bar(np.arange(len(outputs)) + 0.25, targets, 0.25, label = 'target', color = 'lightcoral')
 
-#     output_rollout.append(output//100)
-#     revenue_array.append(output)
-
-#     del revenue_array[0]
-#     day = day + dt.timedelta(days=1)
-    
-#     print(f"{day.strftime('%Y-%m-%d')} - {day.strftime('%A')} - {target/100} - {output/100}")
-
-
-
-# plt.bar(np.arange(len(outputs)) - 0.25, outputs, 0.25, label = 'output 1 day rollout', color = 'dodgerblue')
-# plt.bar(np.arange(len(outputs)), output_rollout, 0.25, label = 'output total rollout', color = 'aqua')
-# plt.bar(np.arange(len(outputs)) + 0.25, targets, 0.25, label = 'target', color = 'lightcoral')
-
-# #plt.ylim([500, 1800])
-# plt.legend()
-# plt.title('1 day vs total rollout for store 3 in January 2020')
-# plt.xlabel('days since 03 jan 2020')
-# plt.ylabel('euro')
-# plt.show()
-
-
-
+plt.legend()
+plt.title('1 day vs total rollout for store 3 in January 2020')
+plt.xlabel('days since 03 jan 2020')
+plt.ylabel('euro')
+plt.show()
 
 
 

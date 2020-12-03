@@ -63,7 +63,7 @@ class GradientBoosting():
         plt.xticks([-5000,-2000,-600,0,600,2000,5000])
         plt.show()
 
-class FullyConnected():
+class FullyConnected(GradientBoosting):
     
     def __init__(self, num_feat):
     
@@ -85,6 +85,9 @@ class FullyConnected():
     
     def predict(self, x):
         return self.model.predict(x.to_numpy())
+    
+    def predict_single(self, x):
+        return self.model.predict(x.to_numpy().reshape(-1,1))
     
     def scale(self, df):
         
