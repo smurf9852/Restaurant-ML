@@ -19,7 +19,7 @@ from sklearn.metrics import mean_squared_log_error
 from sklearn import base
 import tensorflow as tf
 
-
+from sklearn.preprocessing import MinMaxScaler
 
 class GradientBoosting():
     def __init__(self):
@@ -69,9 +69,9 @@ class FullyConnected():
     
         model = Sequential([
             Dense(128, activation='relu', input_shape=(num_feat,)),
-            #Dropout(.3),
+            Dropout(.2),
             Dense(32, activation='relu', input_shape=(num_feat,)),
-            #Dropout(.3),
+            Dropout(.2),
             Dense(1, activation='relu')
         ])
         model.compile(optimizer='adam', loss='mse',
@@ -80,9 +80,28 @@ class FullyConnected():
                           ])
         self.model = model
         
-    #def fit(self, train_x, train_y):
+    def fit(self, train_x, train_y, validation_data, epochs = 1):
+        self.model.fit(train_x.to_numpy(), train_y.to_numpy(), epochs = epochs, validation_data = validation_data)
     
-        #self.model.fit(train_x.to_numpy(), train_y.to_numpy())
+    def predict(self, x):
+        return self.model.predict(x.to_numpy())
+    
+    def scale(self, df):
+        
+        df_x = df.copy().drop(columns=['total_amount'])
+        df_y = df['total_amount']
+        
+        scaler_x, scaler_y = MinMaxScaler(), MinMaxScaler()
+        
+        df_x[df_x.columns] = scaler_x.fit_transform(df_x[df_x.columns])
+        df_y = scaler_y.fit_transform(df_y.reshape(-1, 1))
+        
+        return pd.concat([df_x, df_y], axis=1), scaler_x, scaler_y
+        
+        
+        
+        
+        
         
     
 
