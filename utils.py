@@ -29,7 +29,7 @@ def df_drop_columns_and_outliers(df):
     
     return df
 
-def get_past_revenue(df, row, days = 0, months = 0):
+def get_past_revenue(df, row, days = 0, months = 0, datename = 'created_at'):
     
     this_day = row.name[0]
     this_store_id = row.name[1]
@@ -38,7 +38,7 @@ def get_past_revenue(df, row, days = 0, months = 0):
     prev_day = prev_day - datetime.timedelta(days = days)
     prev_day = prev_day - dateutil.relativedelta.relativedelta(months= months)
     
-    get_previous_day = df.loc[(df.index.get_level_values('created_at') == prev_day) & (df.index.get_level_values('store_id') == this_store_id)]
+    get_previous_day = df.loc[(df.index.get_level_values(datename) == prev_day) & (df.index.get_level_values('store_id') == this_store_id)]
     
     if not get_previous_day.empty:
         return get_previous_day['total_amount'].item()
